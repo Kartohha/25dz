@@ -17,7 +17,7 @@ mongoose
 const app = express()
 
 
-app.use(express.static(path.join(__dirname, '../frontend/public'), {
+app.use(express.static(path.join(__dirname, '../frontend/'), {
   extensions: ['html', 'css', 'js']
 }));
 // Добавляем парсер для JSON и формы
@@ -50,7 +50,7 @@ app.get('/products-action', async (req, res) => {
 res.json(productsSale)
 })
 
-app.get('/products-new', async (req, res) => {
+app.patch('/products-new', async (req, res) => {
   const productsNew = await Product.deleteMany({"__v" : {"$exists": true}})
   const salenone = await Product.updateMany({ onSale: true },{ $set: { onSale: false }});
 res.json(productsNew)
