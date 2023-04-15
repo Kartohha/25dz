@@ -110,13 +110,16 @@ getDataSaleBtn.addEventListener('click', async (e) => {
  def.addEventListener('click', async(e)=>{
   e.preventDefault()
    try {
-     const response = await fetch('/products-new')
+     const response = await fetch('/products-new', {
+      method: 'PATCH'
+     })
      const productsNew = await response.json()
     const salenone = await response.json()
     
    } catch (error) {
      console.error(error)
-   }
+   
+  }
  })
 
 
