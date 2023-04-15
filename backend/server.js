@@ -1,44 +1,40 @@
 // Подключаем необходимые модули и файлы
 const express = require('express')
-const ejs = require('ejs')
 const path = require('path')
 const mongoose = require('mongoose')
-const Product = require('../models/products')
+const Product = require('./models/products')
+
 require('dotenv').config()
 
-const dbUrl=process.env.DB_URL
 // Подключаемся к базе данных
+
+const dbUrl = process.env.DB_URL;
 mongoose
   .connect(dbUrl, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(res => { console.log('connected to DB') })
   .catch(error => { console.log(error) })
 
-// Создаем экземпляр приложения
 const app = express()
 
-// Устанавливаем шаблонизатор EJS
-app.set('view engine', 'ejs')
 
-// Устанавливаем путь к статическим файлам в папке styles (доступ к стилям)
-app.use(express.static(path.join(__dirname, '../frontend/styles')))
-
+app.use(express.static(path.join(__dirname, '../frontend/public'), {
+  extensions: ['html', 'css', 'js']
+}));
 // Добавляем парсер для JSON и формы
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// Функция, которая возвращает путь к шаблону по его имени
-const createPath = (page) => (path.resolve(__dirname, `${page}.ejs`))
+// Роут главной страницы
+app.get('/', async (req, res) => {
+  res.sendFile(path.join(__dirname, '../frontend/public', 'index.html'));
+})
 
 // Роут для отдачи клиенту скрипта
 app.get('/script.js', (req, res) => {
   res.set('Content-Type', 'text/javascript');
-  res.sendFile(__dirname + '/script.js');
+  res.sendFile(path.join(__dirname, '../frontend/public', 'script.js'))
 });
 
-// Роут главной страницы
-app.get('/', async (req, res) => {
-  res.render(createPath('index'), { products: [], productsSale: [] })
-})
 
 // Роут получения всех товаров
 app.get('/products', async (req, res) => {
